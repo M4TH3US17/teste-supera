@@ -8,30 +8,30 @@ import javax.persistence.Embeddable;
 public class Endereco implements Serializable {
 private static final long serialVersionUID = 1L;
 	
-	private String street;
-	private Integer numberHouse;
+	private String rua;
+	private Integer numCasa;
 	
 	public Endereco() {
 	}
 
-	public Endereco(String street, Integer numberHouse) {
-		this.street = street;
-		this.numberHouse = numberHouse;
+	public Endereco(String rua, Integer numCasa) {
+		this.rua = rua;
+		this.numCasa = numCasa;
 	}
 	
-	public String getStreet() {
-		return street;
+	public String getRua() {
+		return rua;
 	}
 
-	public void setStreet(String street) {
-		this.street = street;
+	public void setRua(String rua) {
+		this.rua = rua;
 	}
 
-	public Integer getNumberHouse() {
-		return numberHouse;
+	public Integer getNumCasa() {
+		return numCasa;
 	}
 
-	public void setNumberHouse(Integer numberHouse) {
-		this.numberHouse = numberHouse;
+	public void setNumCasa(Integer numCasa) {
+		this.numCasa = numCasa;
 	}
 }
