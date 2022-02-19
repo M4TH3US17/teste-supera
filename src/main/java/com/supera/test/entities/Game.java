@@ -3,11 +3,14 @@ package com.supera.test.entities;
 import java.io.Serializable;
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "tb_games")
@@ -17,9 +20,13 @@ public class Game implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	@NotBlank(message = "{game.nome.not.blank}")
 	private String nome;
+	@Column(nullable = true, name = "url_imagem")
 	private String urlImagem;
+	@Column(nullable = true)
 	private String descricao;
+	@NotNull(message = "{game.nome.not.null}")
 	private Double preco;
 	
 	public Game() {

@@ -32,7 +32,7 @@ public class Carrinho implements Serializable {
 	private Double frete = 10.00;
 	@Transient
 	private Integer quantidade = 0;
-	@OneToOne//(cascade = CascadeType.REFRESH)
+	@OneToOne
 	private Cliente cliente;
 	@ManyToMany(cascade = CascadeType.MERGE)
 	@JoinTable(

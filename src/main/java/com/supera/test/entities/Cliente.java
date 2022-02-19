@@ -9,6 +9,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "tb_clientes")
@@ -18,7 +22,9 @@ public class Cliente implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	@NotBlank(message = "{cliente.nome.not.blank}")
 	private String nome;
+	@Length(min = 9, max = 18, message = "{cliente.contato.length}")
 	private String contato;
 	
 	@Embedded
@@ -62,6 +68,7 @@ public class Cliente implements Serializable {
 		this.contato = contato;
 	}
 
+	@Valid
 	public Endereco getEndereco() {
 		return endereco;
 	}

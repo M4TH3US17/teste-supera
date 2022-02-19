@@ -2,6 +2,8 @@ package com.supera.test.controllers;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +39,7 @@ public class ClienteController {
 	}
 	
 	@PostMapping(consumes = "application/json", produces = "application/json")
-	public ResponseEntity<Cliente> insert(@RequestBody Cliente obj){
+	public ResponseEntity<Cliente> insert(@Valid @RequestBody Cliente obj){
 		obj = service.insert(obj);
 		return ResponseEntity.status(HttpStatus.CREATED).body(obj);
 	}
@@ -49,7 +51,7 @@ public class ClienteController {
 	}
 	
 	@PutMapping(value = "/{id}", produces = "application/json", consumes = "application/json")
-	public ResponseEntity<Cliente> update(@PathVariable Long id, @RequestBody Cliente obj){
+	public ResponseEntity<Cliente> update(@PathVariable Long id,@Valid @RequestBody Cliente obj){
 		obj = service.update(id, obj);
 		return ResponseEntity.ok().body(obj);
 	}

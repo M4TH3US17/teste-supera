@@ -2,6 +2,8 @@ package com.supera.test.controllers;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +39,7 @@ public class GameController {
 	}
 	
 	@PostMapping(consumes = "application/json", produces = "application/json")
-	public ResponseEntity<Game> insert(@RequestBody Game game){
+	public ResponseEntity<Game> insert(@Valid @RequestBody Game game){
 		return ResponseEntity.status(HttpStatus.CREATED).body(service.insert(game));
 	}
 	
@@ -48,7 +50,7 @@ public class GameController {
 	}
 	
 	@PutMapping(value = "{id}", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<Game> insert(@RequestBody Game game, @PathVariable Long id){
+	public ResponseEntity<Game> insert(@Valid @RequestBody Game game, @PathVariable Long id){
 		return ResponseEntity.status(HttpStatus.CREATED).body(service.update(game, id));
 	}
 }

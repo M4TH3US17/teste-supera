@@ -2,6 +2,8 @@ package com.supera.test.controllers;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,12 +45,12 @@ public class CarrinhoController {
 	}
 	
 	@PostMapping(value = "save/{id}", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<Carrinho> save(@RequestBody Carrinho order, @PathVariable Long id){
+	public ResponseEntity<Carrinho> save(@Valid @RequestBody Carrinho order, @PathVariable Long id){
 		return ResponseEntity.status(HttpStatus.CREATED).body(service.save(order, id));
 	}
 	
 	@PutMapping(value = "/{id}", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<Carrinho> update(@RequestBody Carrinho obj, @PathVariable Long id){
+	public ResponseEntity<Carrinho> update(@Valid @RequestBody Carrinho obj, @PathVariable Long id){
 		return ResponseEntity.ok().body(service.update(obj, id));
 	}
 }
