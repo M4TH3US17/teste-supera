@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -31,9 +32,9 @@ public class Carrinho implements Serializable {
 	private Double frete = 10.00;
 	@Transient
 	private Integer quantidade = 0;
-	@OneToOne
+	@OneToOne//(cascade = CascadeType.REFRESH)
 	private Cliente cliente;
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.MERGE)
 	@JoinTable(
 			joinColumns = @JoinColumn(name = "id_order"),
 			inverseJoinColumns = @JoinColumn(name = "id_game"))
@@ -88,6 +89,10 @@ public class Carrinho implements Serializable {
 
 	public Set<Game> getItens() {
 		return itens;
+	}
+	
+	public Set<Game> getItens(Set<Game> obj) {
+		return itens = obj;
 	}
 
 	public void addItem(Game game) {

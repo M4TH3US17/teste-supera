@@ -50,8 +50,8 @@ public class ClienteService {
 		entity.setNome(obj.getNome());
 		entity.setContato(obj.getContato());
 		entity.setEndereco(obj.getEndereco());
-		entity.getEndereco().setRua(obj.getEndereco().getRua());
 		entity.getEndereco().setNumCasa(obj.getEndereco().getNumCasa());
+		entity.getEndereco().setRua(obj.getEndereco().getRua());
 
 	}
 }

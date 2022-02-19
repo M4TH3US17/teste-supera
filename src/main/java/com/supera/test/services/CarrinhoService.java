@@ -1,5 +1,6 @@
 package com.supera.test.services;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,48 +19,51 @@ public class CarrinhoService {
 	@Autowired
 	private CarrinhoRepository repository;
 	@Autowired
-	private ClienteService clientService;
+	private ClienteService clienteService;
 	@Autowired
 	private GameService gameService;
-	
-	public List<Carrinho> findAll(){
+
+	public List<Carrinho> findAll() {
 		return repository.findAll();
 	}
-	
+
 	public Carrinho findById(Long id) {
 		Optional<Carrinho> obj = repository.findById(id);
 		return obj.get();
 	}
-	
+
 	@Transactional
 	public void deleteById(Long id) {
 		repository.deleteById(id);
 	}
-	
+
 	@Transactional
 	public Carrinho save(Carrinho obj, Long id) {
-		Carrinho order = obj;
-		obj.setCliente(clientService.findById(id));
-		repository.save(order);
+		Carrinho carrinho = obj;
+		obj.setCliente(clienteService.findById(id));
+		repository.save(carrinho);
 		obj.getItens().forEach(item -> {
-			order.getItens().add(gameService.findById(item.getId()));
+			carrinho.getItens().add(gameService.findById(item.getId()));
 		});
-		return repository.save(order);
+		return repository.save(carrinho);
 	}
-	
+
 	@Modifying
 	@Transactional
 	public Carrinho update(Carrinho obj, Long id) {
-		Carrinho entity = repository.findById(id)
-				.orElse(new Carrinho());
-		updateData(entity, obj);
-		return repository.save(entity);
+		Carrinho carrinho = findById(id);
+		carrinho.setCliente(
+				clienteService.findById(carrinho.getCliente().getId()));
+		
+		updateData(carrinho, obj);
+		return repository.save(carrinho);
 	}
-	
+
 	private void updateData(Carrinho entity, Carrinho obj) {
-		entity.getItens().forEach(item -> {
+		entity.getItens(new HashSet<>());
+		obj.getItens().forEach(item -> {
 			entity.getItens().add(gameService.findById(item.getId()));
 		});
 	}
-	
+
 }
