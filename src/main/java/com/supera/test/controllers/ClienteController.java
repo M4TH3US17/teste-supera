@@ -33,7 +33,7 @@ public class ClienteController {
 	}
 	
 	@GetMapping(value = "/{id}", produces = "application/json")
-	public ResponseEntity<Cliente> findById(@PathVariable Long id){
+	public ResponseEntity<Cliente> findById(@PathVariable Long id) throws Exception {
 		Cliente obj = service.findById(id);
 		return ResponseEntity.ok().body(obj);
 	}
@@ -45,13 +45,13 @@ public class ClienteController {
 	}
 	
 	@DeleteMapping(value = "/{id}", produces = "application/json")
-	public ResponseEntity<Void> delete(@PathVariable Long id){
+	public ResponseEntity<Void> delete(@PathVariable Long id) throws Exception {
 		service.delete(id);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 	
 	@PutMapping(value = "/{id}", produces = "application/json", consumes = "application/json")
-	public ResponseEntity<Cliente> update(@PathVariable Long id,@Valid @RequestBody Cliente obj){
+	public ResponseEntity<Cliente> update(@PathVariable Long id,@Valid @RequestBody Cliente obj) throws Exception {
 		obj = service.update(id, obj);
 		return ResponseEntity.ok().body(obj);
 	}

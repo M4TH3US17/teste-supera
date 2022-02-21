@@ -1,7 +1,6 @@
 package com.supera.test.services;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.supera.test.entities.Cliente;
 import com.supera.test.repositories.ClienteRepository;
+import com.supera.test.services.exceptions.notfound.ClienteNotFoundException;
 
 @Service
 public class ClienteService {
@@ -22,9 +22,10 @@ public class ClienteService {
 		return repository.findAll();
 	}
 
-	public Cliente findById(Long id) {
-		Optional<Cliente> obj = repository.findById(id);
-		return obj.orElseThrow(() -> new NullPointerException());
+	public Cliente findById(Long id) throws ClienteNotFoundException {
+		Cliente obj = repository.findById(id)
+				.orElseThrow(() -> new ClienteNotFoundException("Cliente com id " + id + " não foi encontrado."));
+		return obj;
 	}
 
 	@Transactional
@@ -33,14 +34,20 @@ public class ClienteService {
 	}
 
 	@Transactional
-	public void delete(Long id) {
+	public void delete(Long id) throws ClienteNotFoundException {
+		if(repository.existsById(id) == false) {
+			throw new ClienteNotFoundException("Cliente com id " + id + " não foi encontrado.");
+		}
 		repository.deleteById(id);
 
 	}
 
 	@Modifying
 	@Transactional
-	public Cliente update(Long id, Cliente obj) {
+	public Cliente update(Long id, Cliente obj) throws ClienteNotFoundException {
+		if(repository.existsById(id) == false) {
+			throw new ClienteNotFoundException("Cliente com id " + id + " não foi encontrado.");
+		}
 		Cliente entity = repository.getById(id);
 		updateData(entity, obj);
 		return repository.save(entity);

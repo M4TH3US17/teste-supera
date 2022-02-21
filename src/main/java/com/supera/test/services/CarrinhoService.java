@@ -67,7 +67,7 @@ public class CarrinhoService {
 
 	@Modifying
 	@Transactional
-	public Carrinho update(Carrinho obj, Long id) throws CarrinhoNotFoundException {
+	public Carrinho update(Carrinho obj, Long id) throws CarrinhoNotFoundException, ClienteNotFoundException {
 		Carrinho carrinho = findById(id);
 		carrinho.setCliente(clienteService.findById(carrinho.getCliente().getId()));
 		carrinho.setItens(obj.getItens());
