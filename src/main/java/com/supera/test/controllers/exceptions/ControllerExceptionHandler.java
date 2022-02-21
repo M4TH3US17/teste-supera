@@ -4,8 +4,13 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.validation.ConstraintViolationException;
+
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -34,7 +39,7 @@ public class ControllerExceptionHandler {
 	}
 	
 	@ExceptionHandler({ MethodArgumentNotValidException.class })
-	protected ResponseEntity<Map<String, ErrorDetails>> validationException(MethodArgumentNotValidException ex) {
+	protected ResponseEntity<Map<String, ErrorDetails>> validacaoCamposException(MethodArgumentNotValidException ex) {
 		Map<String, ErrorDetails> map = new HashMap<>();
 		ex.getBindingResult().getAllErrors().forEach((error) -> {
 			String fieldError = ((FieldError) error).getField();
@@ -45,5 +50,24 @@ public class ControllerExceptionHandler {
 			map.put(fieldError, err);
 		});
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
+	}
+	
+	@ExceptionHandler({HttpMessageNotReadableException.class})
+	public ResponseEntity<ErrorDetails> sintaxeJsonException(Exception e) {
+		ErrorDetails erro = new ErrorDetails();
+		erro.setStatus(HttpStatus.BAD_REQUEST.value());
+		erro.setTimestamp(timestamp.toString());
+		erro.setError("Erro de sintaxe no JSON.");
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+	}
+	
+	@ExceptionHandler({ConstraintViolationException.class, 
+		DataIntegrityViolationException.class, EmptyResultDataAccessException.class})
+	public ResponseEntity<ErrorDetails> violacaoForeignKey(Exception e) {
+		ErrorDetails erro = new ErrorDetails();
+		erro.setStatus(HttpStatus.CONFLICT.value());
+		erro.setTimestamp(timestamp.toString());
+		erro.setError("Violação de Foreign Key.");
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(erro);
 	}
 }
