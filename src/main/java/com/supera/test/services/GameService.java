@@ -1,7 +1,6 @@
 package com.supera.test.services;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.supera.test.entities.Game;
 import com.supera.test.repositories.GameRepository;
+import com.supera.test.services.exceptions.notfound.GameNotFoundException;
 
 @Service
 public class GameService {
@@ -22,9 +22,10 @@ public class GameService {
 		return repository.findAll();
 	}
 	
-	public Game findById(Long id) {
-		Optional<Game> obj = repository.findById(id);
-		return obj.get();
+	public Game findById(Long id) throws GameNotFoundException {
+		Game obj = repository.findById(id)
+				.orElseThrow(() -> new GameNotFoundException("Game com id " + id + " não foi encontrado."));
+		return obj;
 	}
 	
 	@Transactional
@@ -33,15 +34,18 @@ public class GameService {
 	}
 	
 	@Transactional
-	public void deleteById(Long id) {
+	public void deleteById(Long id) throws GameNotFoundException {
+		if(repository.existsById(id) == false) {
+			throw new  GameNotFoundException("Game com id " + id + " não foi encontrado.");
+		}
 		repository.deleteById(id);
 	}
 	
 	@Modifying
 	@Transactional
-	public Game update(Game game, Long id) {
+	public Game update(Game game, Long id) throws GameNotFoundException {
 		if(repository.existsById(id) == false) {
-			// disparar uma execeção notfound
+			throw new  GameNotFoundException("Game com id " + id + " não foi encontrado.");
 		}
 		Game entity = repository.getById(id);
 		updateData(entity, game);

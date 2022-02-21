@@ -16,6 +16,7 @@ import com.supera.test.entities.ItemCarrinho;
 import com.supera.test.repositories.CarrinhoRepository;
 import com.supera.test.services.exceptions.notfound.CarrinhoNotFoundException;
 import com.supera.test.services.exceptions.notfound.ClienteNotFoundException;
+import com.supera.test.services.exceptions.notfound.GameNotFoundException;
 
 @Service
 public class CarrinhoService {
@@ -48,26 +49,29 @@ public class CarrinhoService {
 	}
 
 	@Transactional
-	public Carrinho save(Carrinho obj, Long id) throws CarrinhoNotFoundException, ClienteNotFoundException {
+	public Carrinho save(Carrinho obj, Long id) throws CarrinhoNotFoundException, 
+	ClienteNotFoundException {
 		Carrinho carrinho = obj;
 		carrinho.setCliente(clienteService.findById(id));
 
 		Set<ItemCarrinho> list = new HashSet<>();
 		obj.getItens().forEach(game -> {
+			try {
 			ItemCarrinho item = itemCarrinhoService.save(new ItemCarrinho(
 					null, gameService.findById(game.getGame().getId()),
 					gameService.findById(game.getGame().getId()).getPreco(),
 					game.getQuantidade()));
 			
 			list.add(item);
-		});
+		} catch(GameNotFoundException e) {}
+		 });
 		carrinho.setItens(new ArrayList<>(list));
 		return repository.save(carrinho);
 	}
 
 	@Modifying
 	@Transactional
-	public Carrinho update(Carrinho obj, Long id) throws CarrinhoNotFoundException, ClienteNotFoundException {
+	public Carrinho update(Carrinho obj, Long id) throws CarrinhoNotFoundException, ClienteNotFoundException, Exception {
 		Carrinho carrinho = findById(id);
 		carrinho.setCliente(clienteService.findById(carrinho.getCliente().getId()));
 		carrinho.setItens(obj.getItens());
@@ -76,17 +80,21 @@ public class CarrinhoService {
 		return repository.save(carrinho);
 	}
 
+	@Transactional
 	private void updateData(Carrinho entity, Carrinho obj) {
 		entity.setItens(new ArrayList<>());
 		
 		Set<ItemCarrinho> list = new HashSet<>();
 		obj.getItens().forEach(game -> {
+			try {
 			ItemCarrinho item = new ItemCarrinho(
 					game.getId(), gameService.findById(game.getGame().getId()),
 					gameService.findById(game.getGame().getId()).getPreco(),
 					game.getQuantidade());
 			
 			list.add(item);
+			} catch(GameNotFoundException e){
+			}
 		});
 		entity.setItens(new ArrayList<>(list));
 	}

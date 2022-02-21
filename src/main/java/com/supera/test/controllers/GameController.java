@@ -33,7 +33,7 @@ public class GameController {
 	}
 	
 	@GetMapping(value = "/{id}", produces = "application/json")
-	public ResponseEntity<Game> findById(@PathVariable Long id){
+	public ResponseEntity<Game> findById(@PathVariable Long id) throws Exception {
 		Game obj = service.findById(id);
 		return ResponseEntity.ok().body(obj);
 	}
@@ -44,13 +44,13 @@ public class GameController {
 	}
 	
 	@DeleteMapping(value = "/{id}", produces = "application/json")
-	public ResponseEntity<Void> deleteById(@PathVariable Long id){
+	public ResponseEntity<Void> deleteById(@PathVariable Long id) throws Exception {
 		service.deleteById(id);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 	
 	@PutMapping(value = "{id}", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<Game> insert(@Valid @RequestBody Game game, @PathVariable Long id){
+	public ResponseEntity<Game> insert(@Valid @RequestBody Game game, @PathVariable Long id) throws Exception {
 		return ResponseEntity.status(HttpStatus.CREATED).body(service.update(game, id));
 	}
 }
