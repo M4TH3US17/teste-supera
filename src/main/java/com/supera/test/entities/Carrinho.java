@@ -2,21 +2,18 @@ package com.supera.test.entities;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -28,21 +25,16 @@ public class Carrinho implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@Transient
-	private Double frete = 10.00;
-	@Transient
-	private Integer quantidade = 0;
-	@OneToOne
+	private Instant date;
+	
+	@ManyToOne
 	private Cliente cliente;
-	@ManyToMany(cascade = CascadeType.MERGE)
-	@JoinTable(
-			joinColumns = @JoinColumn(name = "id_order"),
-			inverseJoinColumns = @JoinColumn(name = "id_game"))
-	private Set<Game> itens = new HashSet<>();
+	@OneToMany(cascade = CascadeType.ALL)
+	private List<ItemCarrinho> itens = new ArrayList<>();
 
 	public Carrinho() {
 	}
-	
+
 	public Carrinho(Long id, Cliente cliente) {
 		this.id = id;
 		this.cliente = cliente;
@@ -57,28 +49,38 @@ public class Carrinho implements Serializable {
 	}
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
-	public Instant getDataCompra() { // Adiciona a data de pedido automaticamente
-		return Instant.now();
+	public Instant getDate() {
+		return date.now();
 	}
 
-	/*public Double getFrete() { // para cada produto será somado 10 ao frete
-		//items.forEach(x -> {quantity += x.getQuantity();});
-		return frete * quantidade;
-	}
-	
-	public Double getTotal() { // calcular o total (frete + preço de cada produto)
-		double soma = 0.0;
-		
-		for(Game x: itens) {
-			//soma += (x.getPreco()  x.getQuantity());
+	public Double getTotal() {
+		double total = 0.0;
+		for(ItemCarrinho item: itens) {
+			total += item.getPrecoTotal();
 		}
-		return soma + getFrete();
+		return total + getFrete();
+	}
+
+	public Double getFrete() {
+		int quantidade = 0;
+		for(ItemCarrinho item: itens) {
+			quantidade += item.getQuantidade();
+		}
+		double frete = (10.00 * quantidade);
+		if(getSubTotal() >= 250.00) {
+			return frete = 0.0;
+		}
+		return frete;
 	}
 	
 	public Double getSubTotal() {
-		return getTotal() - getFrete();
-	}*/
-	
+		double total = 0.0;
+		for(ItemCarrinho item: itens) {
+			total += item.getPrecoTotal();
+		}
+		return (Double) total;
+	}
+
 	public Cliente getCliente() {
 		return cliente;
 	}
@@ -87,16 +89,16 @@ public class Carrinho implements Serializable {
 		this.cliente = cliente;
 	}
 
-	public Set<Game> getItens() {
+	public List<ItemCarrinho> getItens() {
 		return itens;
 	}
 	
-	public Set<Game> getItens(Set<Game> obj) {
-		return itens = obj;
+	public void addItem(ItemCarrinho item) {
+		this.itens.add(item);
 	}
-
-	public void addItem(Game game) {
-		this.itens.add(game);
+	
+	public void setItens(List<ItemCarrinho> itens) {
+		this.itens = itens;
 	}
 
 	@Override
