@@ -1,9 +1,13 @@
 package com.supera.test.controllers.exceptions;
 
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -27,5 +31,19 @@ public class ControllerExceptionHandler {
 		erro.setTimestamp(timestamp.toString());
 		erro.setError(e.getMessage());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
+	}
+	
+	@ExceptionHandler({ MethodArgumentNotValidException.class })
+	protected ResponseEntity<Map<String, ErrorDetails>> validationException(MethodArgumentNotValidException ex) {
+		Map<String, ErrorDetails> map = new HashMap<>();
+		ex.getBindingResult().getAllErrors().forEach((error) -> {
+			String fieldError = ((FieldError) error).getField();
+			ErrorDetails err = new ErrorDetails();
+			err.setError(error.getDefaultMessage());
+			err.setTimestamp(timestamp.toString());
+			err.setStatus(HttpStatus.BAD_REQUEST.value());
+			map.put(fieldError, err);
+		});
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
 	}
 }
