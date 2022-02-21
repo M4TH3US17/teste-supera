@@ -3,7 +3,6 @@ package com.supera.test.services;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import javax.transaction.Transactional;
@@ -15,6 +14,8 @@ import org.springframework.stereotype.Service;
 import com.supera.test.entities.Carrinho;
 import com.supera.test.entities.ItemCarrinho;
 import com.supera.test.repositories.CarrinhoRepository;
+import com.supera.test.services.exceptions.notfound.CarrinhoNotFoundException;
+import com.supera.test.services.exceptions.notfound.ClienteNotFoundException;
 
 @Service
 public class CarrinhoService {
@@ -32,18 +33,22 @@ public class CarrinhoService {
 		return repository.findAll();
 	}
 
-	public Carrinho findById(Long id) {
-		Optional<Carrinho> obj = repository.findById(id);
-		return obj.get();
+	public Carrinho findById(Long id) throws CarrinhoNotFoundException {
+		Carrinho obj = repository.findById(id)
+				.orElseThrow(() -> new CarrinhoNotFoundException("Carrinho com id "+id+" não foi encontrado."));
+		return obj;
 	}
 
 	@Transactional
-	public void deleteById(Long id) {
+	public void deleteById(Long id) throws CarrinhoNotFoundException {
+		if(repository.existsById(id) == false) {
+			throw new CarrinhoNotFoundException("Carrinho com id "+id+" não foi encontrado.");
+		}
 		repository.deleteById(id);
 	}
 
 	@Transactional
-	public Carrinho save(Carrinho obj, Long id) {
+	public Carrinho save(Carrinho obj, Long id) throws CarrinhoNotFoundException, ClienteNotFoundException {
 		Carrinho carrinho = obj;
 		carrinho.setCliente(clienteService.findById(id));
 
@@ -62,7 +67,7 @@ public class CarrinhoService {
 
 	@Modifying
 	@Transactional
-	public Carrinho update(Carrinho obj, Long id) {
+	public Carrinho update(Carrinho obj, Long id) throws CarrinhoNotFoundException {
 		Carrinho carrinho = findById(id);
 		carrinho.setCliente(clienteService.findById(carrinho.getCliente().getId()));
 		carrinho.setItens(obj.getItens());
