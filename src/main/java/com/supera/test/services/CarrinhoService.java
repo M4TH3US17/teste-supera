@@ -17,6 +17,7 @@ import com.supera.test.repositories.CarrinhoRepository;
 import com.supera.test.services.exceptions.notfound.CarrinhoNotFoundException;
 import com.supera.test.services.exceptions.notfound.ClienteNotFoundException;
 import com.supera.test.services.exceptions.notfound.GameNotFoundException;
+import com.supera.test.services.exceptions.notfound.ItemCarrinhoNotFoundException;
 
 @Service
 public class CarrinhoService {
@@ -50,7 +51,7 @@ public class CarrinhoService {
 
 	@Transactional
 	public Carrinho save(Carrinho obj, Long id) throws CarrinhoNotFoundException, 
-	ClienteNotFoundException {
+	ClienteNotFoundException, ItemCarrinhoNotFoundException {
 		Carrinho carrinho = obj;
 		carrinho.setCliente(clienteService.findById(id));
 
@@ -71,7 +72,8 @@ public class CarrinhoService {
 
 	@Modifying
 	@Transactional
-	public Carrinho update(Carrinho obj, Long id) throws CarrinhoNotFoundException, ClienteNotFoundException, Exception {
+	public Carrinho update(Carrinho obj, Long id) throws CarrinhoNotFoundException,
+	ClienteNotFoundException, ItemCarrinhoNotFoundException {
 		Carrinho carrinho = findById(id);
 		carrinho.setCliente(clienteService.findById(carrinho.getCliente().getId()));
 		carrinho.setItens(obj.getItens());
