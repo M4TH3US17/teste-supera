@@ -32,6 +32,21 @@ public class GameController {
 		return ResponseEntity.ok().body(list);
 	}
 	
+	@GetMapping(value = "/ordemnome", produces = "application/json")
+	public ResponseEntity<List<Game>> findByOrdemAlfabetica() throws Exception {
+		return ResponseEntity.ok().body(service.findByOrdemAlfabetica());
+	}
+	
+	@GetMapping(value = "/preco-asc", produces = "application/json")
+	public ResponseEntity<List<Game>> findByPrecoAsc() throws Exception {
+		return ResponseEntity.ok().body(service.findByPrecoAsc());
+	}
+	
+	@GetMapping(value = "/preco-desc", produces = "application/json")
+	public ResponseEntity<List<Game>> findByPrecoDesc() throws Exception {
+		return ResponseEntity.ok().body(service.findByPrecoDesc());
+	}
+	
 	@GetMapping(value = "/{id}", produces = "application/json")
 	public ResponseEntity<Game> findById(@PathVariable Long id) throws Exception {
 		Game obj = service.findById(id);

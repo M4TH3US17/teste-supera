@@ -10,10 +10,8 @@ import org.springframework.context.annotation.Profile;
 import com.supera.test.entities.Cliente;
 import com.supera.test.entities.Endereco;
 import com.supera.test.entities.Game;
-import com.supera.test.repositories.CarrinhoRepository;
 import com.supera.test.repositories.ClienteRepository;
 import com.supera.test.repositories.GameRepository;
-import com.supera.test.repositories.ItemCarrinhoRepository;
 
 @Configuration
 @Profile("test")
@@ -23,10 +21,6 @@ public class TesteConfig implements CommandLineRunner {
 	private ClienteRepository clienteRepository;
 	@Autowired
 	private GameRepository gameRepository;
-	@Autowired
-	private CarrinhoRepository carrinhoRepository;
-	@Autowired
-	private ItemCarrinhoRepository itemCarrinhoRepository;
 	
 	Double total = 0.0;
 	Integer quantidade = 0;

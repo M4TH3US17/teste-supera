@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import com.supera.test.entities.Carrinho;
+import com.supera.test.entities.Game;
 import com.supera.test.entities.ItemCarrinho;
 import com.supera.test.repositories.CarrinhoRepository;
 import com.supera.test.services.exceptions.notfound.CarrinhoNotFoundException;
@@ -54,18 +55,15 @@ public class CarrinhoService {
 	ClienteNotFoundException, ItemCarrinhoNotFoundException {
 		Carrinho carrinho = obj;
 		carrinho.setCliente(clienteService.findById(id));
-
 		Set<ItemCarrinho> list = new HashSet<>();
+		
 		obj.getItens().forEach(game -> {
 			try {
-			ItemCarrinho item = itemCarrinhoService.save(new ItemCarrinho(
-					null, gameService.findById(game.getGame().getId()),
-					gameService.findById(game.getGame().getId()).getPreco(),
-					game.getQuantidade()));
+			Game jogo = gameService.findById(game.getGame().getId());
+			ItemCarrinho item = itemCarrinhoService.save(new ItemCarrinho(null, jogo, jogo.getPreco(), game.getQuantidade()));
 			
 			list.add(item);
-		} catch(GameNotFoundException e) {}
-		 });
+		} catch(GameNotFoundException e) {}});
 		carrinho.setItens(new ArrayList<>(list));
 		return repository.save(carrinho);
 	}
@@ -93,6 +91,7 @@ public class CarrinhoService {
 					game.getId(), gameService.findById(game.getGame().getId()),
 					gameService.findById(game.getGame().getId()).getPreco(),
 					game.getQuantidade());
+			
 			
 			list.add(item);
 			} catch(GameNotFoundException e){

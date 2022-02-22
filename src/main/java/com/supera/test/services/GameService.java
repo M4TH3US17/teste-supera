@@ -17,9 +17,25 @@ public class GameService {
 
 	@Autowired
 	private GameRepository repository;
+	int qnt = 0;
 	
 	public List<Game> findAll(){
 		return repository.findAll();
+	}
+	
+	public List<Game> findByOrdemAlfabetica() {
+		List<Game> list = repository.findAllOrderByNome();
+		return list;
+	}
+	
+	public List<Game> findByPrecoAsc() {
+		List<Game> list = repository.findAllOrderByPrecoAsc();
+		return list;
+	}
+	
+	public List<Game> findByPrecoDesc() {
+		List<Game> list = repository.findAllOrderByPrecoDesc();
+		return list;
 	}
 	
 	public Game findById(Long id) throws GameNotFoundException {
@@ -45,7 +61,7 @@ public class GameService {
 	@Transactional
 	public Game update(Game game, Long id) throws GameNotFoundException {
 		if(repository.existsById(id) == false) {
-			throw new  GameNotFoundException("Game com id " + id + " não foi encontrado.");
+			throw new GameNotFoundException("Game com id " + id + " não foi encontrado.");
 		}
 		Game entity = repository.getById(id);
 		updateData(entity, game);
